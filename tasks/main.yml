@@ -28,23 +28,10 @@
       tags:
         - slack
 
-    - name: Install pidof package
-      homebrew:
-        name: pidof
-      tags:
-        - slack
-
-    - name: Check program running
-      register: slack_running
-      failed_when: False
-      changed_when: slack_running.stdout | length > 0 | bool
-      command: pidof Slack
-      tags:
-        - slack
-
-    - name: Fact program running
-      set_fact:
-        slack_started: "{{ slack_running.stdout_lines | length > 0 | bool }}"
+    - name: Start application
+      when: slack_started
+      changed_when: False
+      command: open -j /Applications/Slack.app
       tags:
         - slack
 
