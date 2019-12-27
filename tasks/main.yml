@@ -1,0 +1,51 @@
+# Standards: 0.1
+---
+- name: Fact slack user
+  set_fact:
+    slack_user: "{{ slack_user | default(homebrew_user) | default(ansible_user_id) }}"
+  tags:
+    - slack
+
+- become: "{{ (slack_user != ansible_user_id) | bool }}"
+  become_user: "{{ slack_user }}"
+  block:
+    - name: Install required package
+      ignore_errors: True
+      homebrew_cask:
+        name: slack
+        greedy: True
+        options: appdir=/Applications
+        accept_external_apps: False
+        state: upgraded
+      tags:
+        - slack
+
+    - name: Remove quarantine flag
+      register: slack_quarantine
+      failed_when: slack_quarantine.rc != 0 and "No such xattr" not in slack_quarantine.stderr
+      changed_when: slack_quarantine.rc == 0
+      command: xattr -d com.apple.quarantine /Applications/Slack.app
+      tags:
+        - slack
+
+    - name: Install pidof package
+      homebrew:
+        name: pidof
+      tags:
+        - slack
+
+    - name: Check program running
+      register: slack_running
+      failed_when: False
+      changed_when: slack_running.stdout | length > 0 | bool
+      command: pidof Slack
+      tags:
+        - slack
+
+    - name: Fact program running
+      set_fact:
+        slack_started: "{{ slack_running.stdout_lines | length > 0 | bool }}"
+      tags:
+        - slack
+
+...
