@@ -1,6 +1,6 @@
 # slack
 
-[![Build Status](https://cloud.drone.io/api/badges/machippie/slack/status.svg)](https://cloud.drone.io/machippie/google-chrome)
+[![Build Status](https://cloud.drone.io/api/badges/machippie/slack/status.svg)](https://cloud.drone.io/machippie/slack)
 
 Ansible role to configure slack.
 
