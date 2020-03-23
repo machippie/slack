@@ -20,19 +20,12 @@
       tags:
         - slack
 
-    - name: Remove quarantine flag
-      register: slack_quarantine
-      failed_when: slack_quarantine.rc != 0 and "No such xattr" not in slack_quarantine.stderr
-      changed_when: slack_quarantine.rc == 0
-      command: xattr -d com.apple.quarantine /Applications/Slack.app
-      tags:
-        - slack
-
-    - name: Start application
-      when: slack_started
-      changed_when: False
-      command: open -j /Applications/Slack.app
-      tags:
-        - slack
+- name: Remove quarantine flag
+  register: slack_quarantine
+  failed_when: slack_quarantine.rc != 0 and "No such xattr" not in slack_quarantine.stderr
+  changed_when: slack_quarantine.rc == 0
+  command: xattr -d com.apple.quarantine /Applications/Slack.app
+  tags:
+    - slack
 
 ...
